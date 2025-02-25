@@ -3,23 +3,81 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const User = require('../models/user')
 const path = require('path')
-
+const crypto = require("crypto");
+const base64url = require("base64url");
 const router = express.Router()
+const {generateAuthenticationOptions,generateRegistrationOptions} =require("@simplewebauthn/server")
+// router.post('/signup', async (req, res) => {
+    // try {
+    //     const student_name = req.body['name']
+    //     const matric_no = req.body['matric-no']
 
-router.post('/signup', async (req, res) => {
+    //     let user = await User.findOne({ matric_no })
+    //     if (user) return res.status(400).json({ error: 'Student already exists' })
+
+    //     // Get fingerprint data
+    //     // const hashedPassword = await bcrypt.hash(password, 10)
+
+    //     // user = new User({ matric_no, matric_no, password: hashedPassword })
+    //     user = new User({ student_name, matric_no })
+    //     await user.save()
+
+    //     res.status(201).json({ message: 'Student registered successfully' })
+    // } catch (err) {
+    //     console.log('signup error: ', err)
+    //     res.status(500).json({ error: 'Server error' })
+    // }
+// })
+
+
+let data={}
+
+router.post('/init-reg', async (req, res) => {
     try {
         const student_name = req.body['name']
         const matric_no = req.body['matric-no']
+        // const challenge = "UZSL85T9AFC"//base64url.encode(crypto.randomBytes(32))
+        // const userId = "UZSL85T9AFC"//base64url.encode(crypto.randomBytes(16))
+        const opts = await generateRegistrationOptions({
+            // rpID: "clean-kohl.vercel.app",
+            rpID: "localhost",
+            rpName: "Clean Kohl",
+            // rpName: "Clean Kohl",
+            userName: student_name
+        })
 
-        let user = await User.findOne({ matric_no })
-        if (user) return res.status(400).json({ error: 'Student already exists' })
-
+        // const publicKeyCredentialCreationOptions = {
+        //     challenge,
+        //     rp: {
+        //         name: "Duo Security",
+        //         // id: "duosecurity.com",
+        //     },
+        //     user: {
+        //         id: userId,
+        //         name: "lee@webauthn.guide",
+        //         displayName: "Lee",
+        //     },
+        //     pubKeyCredParams: [{alg: -7, type: "public-key"}],
+        //     authenticatorSelection: {
+        //         authenticatorAttachment: "platform",
+        //         userVerification: "preferred" 
+        //     },
+        //     timeout: 60000,
+        //     attestation: "direct"
+        //     };
+        
+            
+        console.log('-----------------------------------')
+        console.log(opts, ' opts')
+        // await db.collection("users").doc(email).set({ challenge });
+        res.json(opts);
+        
         // Get fingerprint data
         // const hashedPassword = await bcrypt.hash(password, 10)
 
         // user = new User({ matric_no, matric_no, password: hashedPassword })
-        user = new User({ student_name, matric_no })
-        await user.save()
+        // user = new User({ student_name, matric_no })
+        // await user.save()
 
         res.status(201).json({ message: 'Student registered successfully' })
     } catch (err) {
@@ -27,6 +85,8 @@ router.post('/signup', async (req, res) => {
         res.status(500).json({ error: 'Server error' })
     }
 })
+
+
 
 router.post('/login', async (req, res) => {
     try {

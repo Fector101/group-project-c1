@@ -4,12 +4,13 @@ const express = require('express')
 const cors = require('cors')
 
 const authns =  require('./src/routes/authns')
-const adminRoutes =  require('./src/routes/admins')
-const studentRoutes =  require('./src/routes/students')
+// const adminRoutes =  require('./src/routes/admins')
+// const studentRoutes =  require('./src/routes/students')
 
-const connectDB = require('./src/db')
+// const connectDB = require('./src/db')
 const app = express()
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 4000
+// const port = 4000
 
 // Middleware
 app.use(express.static('public'))
@@ -18,16 +19,18 @@ app.use(express.urlencoded({ extended: true }))
 app.use(cors())
 
 // Connect to MongoDB
-connectDB()
+// connectDB()
 
 
 // Routes
-app.use('/', studentRoutes)
-app.use('/', adminRoutes)
+// app.use('/', studentRoutes)
+// app.use('/', adminRoutes)
 app.use('/api/authn', authns)
 
 app.get('/',(req,res)=>{
-  res.sendFile(path.join(__dirname, '/public/pages/signup.html'));
+  console.log(__dirname,' __dirname')
+  res.sendFile(path.join(__dirname, '/public/pages/signup.html'))
+  
 })
 
 
@@ -41,3 +44,6 @@ app.use((req,res)=>{
 app.listen(port, () => {
   console.log(`Servering on localhost:${port}`);
 });
+
+//for vercel serverless functions
+module.exports = app;
